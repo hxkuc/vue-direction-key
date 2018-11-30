@@ -1,0 +1,15 @@
+{
+  "name": "vue-direction-key",
+  "version": "1.0.4",
+  "description": "",
+  "main": "./Keyboard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hxkuc/vue-direction-key.git"
+  },
+  "author": "huang",
+  "license": "ISC"
+}
