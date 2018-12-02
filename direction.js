@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Keyboard = factory());
+  (global.Direction = factory());
 }(this, (function () { 'use strict';
 
   /*
@@ -13,32 +13,32 @@
    */
 
   function install(Vue) {
-    Vue.directive('keyboard', {
+    Vue.directive('direction', {
       inserted: function (el, binding, vnode) {
         // console.log('inserted--' + '------' + binding.value.x + '-' + binding.value.y)
         // 获取挂载对象
-        let keyboard = getKeyboard(vnode.context, Vue, binding.arg);
+        let directionObject = getDirection(vnode.context, Vue, binding.arg);
         let node = getNode(vnode);
-        bindNodeArray(keyboard, node, binding.value);
+        bindNodeArray(directionObject, node, binding.value);
         node.addEventListener('focus', function (e) {
           // 绑定指针位置
           // 获取更新后的value（绑定事件要用更新后的值，要不然会出问题）
-          keyboard.nodeArray.forEach(list => {
+          directionObject.nodeArray.forEach(list => {
             list.forEach(row => {
               if (row.node == node) {
-                keyboard.x = row.value.x;
-                keyboard.y = row.value.y;
+                directionObject.x = row.value.x;
+                directionObject.y = row.value.y;
                 e.target.select();
               }
             });
           });
         });
 
-        if (keyboard.eventList) {
-          for (let i of Object.keys(keyboard.eventList)) {
-            keyboard.eventList[i].forEach(fun => {
+        if (directionObject.eventList) {
+          for (let i of Object.keys(directionObject.eventList)) {
+            directionObject.eventList[i].forEach(fun => {
               node.addEventListener(i, function (e) {
-                keyboard.nodeArray.forEach(list => {
+                directionObject.nodeArray.forEach(list => {
                   list.forEach(row => {
                     if (row.node == node) {
                       fun(e, row.value);
@@ -52,8 +52,8 @@
       },
       unbind: function (el, binding, vnode) {
         // console.log('unbind--' + '------' + binding.value.x + '-' + binding.value.y)
-        let keyboard = getKeyboard(vnode.context, Vue, binding.arg);
-        delete keyboard.nodeArray[binding.value.y][binding.value.x];
+        let directionObject = getDirection(vnode.context, Vue, binding.arg);
+        delete directionObject.nodeArray[binding.value.y][binding.value.x];
       },
       bind(el, binding, vnode) {
         // console.log('bind--' + '------' + binding.value.x + '-' + binding.value.y)
@@ -61,22 +61,22 @@
       update(el, binding, vnode) {
         // console.log('update--old' + '---' + binding.oldValue.x + '-' + binding.oldValue.y)
         // console.log('update--' + '------' + binding.value.x + '-' + binding.value.y)
-        let keyboard = getKeyboard(vnode.context, Vue, binding.arg);
+        let directionObject = getDirection(vnode.context, Vue, binding.arg);
         if (binding.oldValue.x !== binding.value.x || binding.oldValue.y !== binding.value.y) {
-          delete keyboard.nodeArray[binding.oldValue.y][binding.oldValue.x];
+          delete directionObject.nodeArray[binding.oldValue.y][binding.oldValue.x];
           let node = getNode(vnode);
           Vue.nextTick(function () {
-            bindNodeArray(keyboard, node, binding.value);
+            bindNodeArray(directionObject, node, binding.value);
           });
         }
       }
     });
-    Vue.prototype.$getKeyboard = function (keys) {
-      return getKeyboard(this, Vue, keys)
+    Vue.prototype.$getDirection = function (keys) {
+      return getDirection(this, Vue, keys)
     };
   }
 
-  class Keyboard {
+  class DirectionKey {
     constructor(Vue) {
       this.nodeArray = [];
       this.x = 0;
@@ -181,23 +181,23 @@
     }
   }
 
-  // 把keyboard数据挂载到上下文上
-  function getKeyboard(context, Vue, keys) {
+  // 把direction数据挂载到上下文上
+  function getDirection(context, Vue, keys) {
     keys = keys || '__default__';
-    if (!context.$__keyboard__) {
-      context.$__keyboard__ = {};
+    if (!context.$__direction__) {
+      context.$__direction__ = {};
     }
-    if (!context.$__keyboard__[keys]) {
-      context.$__keyboard__[keys] = new Keyboard(Vue);
+    if (!context.$__direction__[keys]) {
+      context.$__direction__[keys] = new DirectionKey(Vue);
     }
-    return context.$__keyboard__[keys]
+    return context.$__direction__[keys]
   }
-  // 向keyboard对象上添加元素
-  function bindNodeArray(keyboard, node, value) {
-    if (!keyboard.nodeArray[value.y]) {
-      keyboard.nodeArray[value.y] = [];
+  // 向direction对象上添加元素
+  function bindNodeArray(directionObject, node, value) {
+    if (!directionObject.nodeArray[value.y]) {
+      directionObject.nodeArray[value.y] = [];
     }
-    keyboard.nodeArray[value.y][value.x] = {
+    directionObject.nodeArray[value.y][value.x] = {
       node: node,
       value: value
     };

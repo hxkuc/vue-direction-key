@@ -1,8 +1,8 @@
 {
   "name": "vue-direction-key",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
-  "main": "./Keyboard.js",
+  "main": "./direction.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
